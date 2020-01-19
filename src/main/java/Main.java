@@ -14,7 +14,7 @@ public class Main {
         if (moscowMetro != null) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             String json = gson.toJson(moscowMetro);
-            System.out.println(json);
+//            System.out.println(json);
         }
     }
 }

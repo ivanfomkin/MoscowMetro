@@ -13,9 +13,11 @@ public class MetroParser {
     private final String linkToWiki = "https://ru.wikipedia.org/wiki/%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA_%D1%81%D1%82%D0%B0%D0%BD%D1%86%D0%B8%D0%B9_%D0%9C%D0%BE%D1%81%D0%BA%D0%BE%D0%B2%D1%81%D0%BA%D0%BE%D0%B3%D0%BE_%D0%BC%D0%B5%D1%82%D1%80%D0%BE%D0%BF%D0%BE%D0%BB%D0%B8%D1%82%D0%B5%D0%BD%D0%B0";
 
     public StationIndex getStationIndex() throws IOException {
-        metro = parseStationIndexFromWiki();
+        metro = new StationIndex();
+//        metro = parseStationIndexFromWiki();
 //        parseConnectionFromWiki(metro);
-
+        parseLineFromWiki(metro);
+        parseStationFromWiki(metro);
         return metro;
     }
 
@@ -58,8 +60,7 @@ public class MetroParser {
         return tableLine.select("tbody").select("tr"); //Получаем все строки этих таблиц и ретёрним их
     }
 
-    private StationIndex parseStationIndexFromWiki() throws IOException {
-        StationIndex parsedStationIndex = new StationIndex();
+    private void parseLineFromWiki(StationIndex stationIndexForParsing) throws IOException {
         Elements tableLine = getTableLineFromWiki();
 
         for (Element element : tableLine) { //Перебираем все строки таблиц, содержащих инфо о станциях
@@ -70,6 +71,7 @@ public class MetroParser {
             if (cells.size() == 7 || cells.size() == 8) { //Если в строке 7 или 8 ячеек то парсим инфу оттуда
                 String lineNumber = cells.select("span.sortkey").first().text(); //Получаем номер линии
                 String lineName = cells.get(0).select("img").attr("alt"); //Название линии
+                lineName = lineName.replaceAll(" линия", ""); //Удаляем слово "линия"
                 String lineColor;
                 //Т.к. у 11A цвет не прописан, придётся задать его вручную
                 if (lineNumber.equals("011А")) {
@@ -79,15 +81,33 @@ public class MetroParser {
                 }
                 Line currentLine = new Line(lineNumber, lineName, lineColor);
 
-                String stationName = cells.get(1).select("a").text().replaceAll("[0-9]", "");
-                Station currentStation = new Station(stationName, currentLine);
 
-                parsedStationIndex.addLine(currentLine);
-                currentLine.addStation(currentStation);
-                parsedStationIndex.addStation(currentStation);
+                stationIndexForParsing.addLine(currentLine);
             }
         }
-        return parsedStationIndex;
+    }
+
+    private void parseStationFromWiki(StationIndex stationIndexForParsing) throws IOException {
+        Elements tableLine = getTableLineFromWiki();
+
+        for (Element element : tableLine) { //Перебираем все строки таблиц, содержащих инфо о станциях
+            Elements cells = element.select("td"); //Получаем элементы, содержащие ячейки каждой линии
+            //Если ячеек 7 - это монорельс или Московское центральное кольцо
+            //Если ячеек 8 - это обычное метро
+
+            if (cells.size() == 7 || cells.size() == 8) { //Если в строке 7 или 8 ячеек то парсим инфу оттуда
+                String lineNumber = cells.select("span.sortkey").first().text(); //Получаем номер линии
+                Line currentLine = stationIndexForParsing.getLine(lineNumber);
+                System.out.println("Линия " + currentLine.getName() + " получена");
+                String stationName = cells.get(1).select("a").text().replaceAll("[0-9]", "");
+                Station currentStation = new Station(stationName, currentLine);
+                System.out.println("Станция " + currentStation.getName() + " на линии " + currentLine.getName() + " создана");
+                stationIndexForParsing.addStation(currentStation);
+                System.out.println("Станция добавлено в метро");
+                currentLine.addStation(currentStation);
+                System.out.println("Станция добавлена на линию");
+            }
+        }
     }
 
 //    private void parseConnectionFromWiki(StationIndex stationIndex) throws IOException { //Парсим переходы

@@ -1,23 +1,24 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Line implements Comparable<Line> {
     private String number;
     private String name;
     private String color;
-    private List<Station> stations;
+    private Set<Station> stations;
 
     public Line(String number, String name, String color) {
         this.number = number;
         this.name = name;
         this.color = color;
-        stations = new ArrayList<>();
+        this.stations = new TreeSet<>();
     }
 
     public void addStation(Station station) {
-        if (!stations.contains(station))
-            stations.add(station);
-        System.out.println("Station " + station.getName() + " added to " + name);
+        stations.add(station);
+    }
+
+    public Set<Station> getStations() {
+        return stations;
     }
 
     public String getNumber() {
@@ -38,8 +39,8 @@ public class Line implements Comparable<Line> {
     }
 
     @Override
-    public int compareTo(Line o) {
-        return number.compareToIgnoreCase(o.getNumber());
+    public int compareTo(Line line) {
+        return number.compareTo(line.getNumber());
     }
 
     @Override
