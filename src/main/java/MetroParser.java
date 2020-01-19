@@ -14,7 +14,7 @@ public class MetroParser {
 
     public StationIndex getStationIndex() throws IOException {
         metro = parseStationIndexFromWiki();
-        parseConnectionFromWiki(metro);
+//        parseConnectionFromWiki(metro);
 
         return metro;
     }
@@ -83,39 +83,39 @@ public class MetroParser {
                 Station currentStation = new Station(stationName, currentLine);
 
                 parsedStationIndex.addLine(currentLine);
+                currentLine.addStation(currentStation);
                 parsedStationIndex.addStation(currentStation);
-
             }
         }
         return parsedStationIndex;
     }
 
-    private void parseConnectionFromWiki(StationIndex stationIndex) throws IOException { //Парсим переходы
-        Elements tableLine = getTableLineFromWiki();
-        for (Element element : tableLine) { //Парсим переходы в этом цикле
-            Elements cells = element.select("td"); //Получаем ячейки в каждом элементе.
-            if (cells.size() == 7 || cells.size() == 8) { //Если в строке 7 или 8 ячеек то парсим инфу оттуда
-                List<Station> connection = new ArrayList<>(); //Перехды
-                //Информация  переходе находится в 3-ей слева ячейки строки
-                String stationName = cells.get(1).select("a").text().replaceAll("[0-9]", "");
-                String stationLine = cells.select("span.sortkey").first().text(); //Номер линии
-                System.out.println("stationName = " + stationName);
-                System.out.println("stationLine = " + stationLine);
-                Station currentStation = metro.getStation(stationName, stationLine);
-                System.out.println(currentStation);
-                //Если переходов нет, то <td data-sort-value="Infinity">
-                Boolean hasConnections = !cells.get(3).attr("data-sort-value").equals("Infinity");
-                if (!hasConnections) continue;
-                Elements confectionsUrlElement = cells.get(3).select("a");
-                connection.add(currentStation);
-                for (Element linkToStationOnWiki : confectionsUrlElement) {
-                    String connectedStationName = URLDecoder.decode(linkToStationOnWiki.attr("href"), "UTF-8");
-                    connectedStationName = delAllExcessCharsOfStationName(connectedStationName);
-                    connection.add(stationIndex.getStation(connectedStationName));
-                }
-//                if (connection != null)
-//                    stationIndex.addConnection(connection);
-            }
-        }
-    }
+//    private void parseConnectionFromWiki(StationIndex stationIndex) throws IOException { //Парсим переходы
+//        Elements tableLine = getTableLineFromWiki();
+//        for (Element element : tableLine) { //Парсим переходы в этом цикле
+//            Elements cells = element.select("td"); //Получаем ячейки в каждом элементе.
+//            if (cells.size() == 7 || cells.size() == 8) { //Если в строке 7 или 8 ячеек то парсим инфу оттуда
+//                List<Station> connection = new ArrayList<>(); //Перехды
+//                //Информация  переходе находится в 3-ей слева ячейки строки
+//                String stationName = cells.get(1).select("a").text().replaceAll("[0-9]", "");
+//                String stationLine = cells.select("span.sortkey").first().text(); //Номер линии
+//                System.out.println("stationName = " + stationName);
+//                System.out.println("stationLine = " + stationLine);
+//                Station currentStation = metro.getStation(stationName, stationLine);
+//                System.out.println(currentStation);
+//                //Если переходов нет, то <td data-sort-value="Infinity">
+//                Boolean hasConnections = !cells.get(3).attr("data-sort-value").equals("Infinity");
+//                if (!hasConnections) continue;
+//                Elements confectionsUrlElement = cells.get(3).select("a");
+//                connection.add(currentStation);
+//                for (Element linkToStationOnWiki : confectionsUrlElement) {
+//                    String connectedStationName = URLDecoder.decode(linkToStationOnWiki.attr("href"), "UTF-8");
+//                    connectedStationName = delAllExcessCharsOfStationName(connectedStationName);
+//                    connection.add(stationIndex.getStation(connectedStationName));
+//                }
+////                if (connection != null)
+////                    stationIndex.addConnection(connection);
+//            }
+//        }
+//    }
 }

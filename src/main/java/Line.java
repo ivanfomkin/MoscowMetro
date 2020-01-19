@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +11,7 @@ public class Line implements Comparable<Line> {
         this.number = number;
         this.name = name;
         this.color = color;
-        stations = new ArrayList<Station>();
+        stations = new ArrayList<>();
     }
 
     public void addStation(Station station) {

@@ -5,7 +5,6 @@ public class Station implements Comparable<Station> {
     public Station(String name, Line line) {
         this.line = line;
         this.name = name;
-        line.addStation(this);
     }
 
     public Line getLine() {
