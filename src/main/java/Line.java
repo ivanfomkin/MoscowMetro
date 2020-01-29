@@ -1,9 +1,12 @@
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import java.util.*;
 
 public class Line implements Comparable<Line> {
     private String number;
     private String name;
     private String color;
+    @JsonIgnore
     private Set<Station> stations;
 
     public Line(String number, String name, String color) {
@@ -31,6 +34,13 @@ public class Line implements Comparable<Line> {
 
     public String getColor() {
         return color;
+    }
+
+    @JsonIgnore
+    public List<String> getStationNames() {
+        ArrayList<String> stationNames = new ArrayList<>();
+        getStations().forEach(station -> stationNames.add(station.getName()));
+        return stationNames;
     }
 
     @Override

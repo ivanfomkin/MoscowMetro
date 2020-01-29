@@ -1,4 +1,7 @@
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 public class Station implements Comparable<Station> {
+    @JsonIgnore
     private Line line;
     private String name;
 
