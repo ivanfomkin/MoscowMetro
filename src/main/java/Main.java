@@ -18,6 +18,8 @@ public class Main {
             try {
                 objectMapper.writerWithDefaultPrettyPrinter().writeValue(new FileOutputStream(JSON_OUT_FILE), moscowMetro);
                 System.out.println("All station parsed! Result file: " + JSON_OUT_FILE);
+                int stationCounter = JsonParser.parseStationFromJSON(JSON_OUT_FILE).size();
+                System.out.println("Count of all stations of metro, Monorail and  Moscow Central Ring is " + stationCounter);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
